@@ -30,6 +30,7 @@ import (
 	"github.com/containerd/containerd/v2/core/images"
 	"github.com/containerd/containerd/v2/core/transfer"
 	"github.com/containerd/containerd/v2/core/unpack"
+	snpkg "github.com/containerd/containerd/v2/pkg/snapshotters"
 )
 
 func (ts *localTransferService) importStream(ctx context.Context, i transfer.ImageImporter, is transfer.ImageStorer, tops *transfer.Config) error {
@@ -108,6 +109,7 @@ func (ts *localTransferService) importStream(ctx context.Context, i transfer.Ima
 			if err != nil {
 				return fmt.Errorf("unable to initialize unpacker: %w", err)
 			}
+			handler = snpkg.AppendInfoHandlerWrapper(index.Annotations[images.AnnotationImageName])(handler)
 			handler = unpacker.Unpack(handler)
 		}
 	}
